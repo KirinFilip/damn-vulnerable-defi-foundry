@@ -1,4 +1,5 @@
 # Challenge #9 - Puppet V2
+
 The developers of the [last lending pool](https://github.com/nicolasgarcia214/damn-vulnerable-defi-foundry/tree/master/test/Levels/puppet) are saying that they've learned the lesson. And just released a new version!
 
 Now they're using a [Uniswap v2 exchange](https://docs.uniswap.org/protocol/V2/introduction) as a price oracle, along with the recommended utility libraries. That should be enough.

