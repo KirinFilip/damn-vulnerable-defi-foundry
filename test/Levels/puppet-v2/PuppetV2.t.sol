@@ -137,9 +137,9 @@ contract PuppetV2 is Test {
 
         vm.stopPrank();
 
-        console.log("- Attacker ETH:", attacker.balance);
-        console.log("- Attacker WETH:", weth.balanceOf(attacker));
-        console.log("- Attacker DVT:", dvt.balanceOf(attacker));
+        console.log("- Attacker ETH:", attacker.balance); // 0
+        console.log("- Attacker WETH:", weth.balanceOf(attacker)); // 404200300864247036 wei
+        console.log("- Attacker DVT:", dvt.balanceOf(attacker)); // 1000000000000000000000000
 
         /**
          * EXPLOIT END *
