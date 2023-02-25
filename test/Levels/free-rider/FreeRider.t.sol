@@ -10,6 +10,8 @@ import {DamnValuableNFT} from "../../../src/Contracts/DamnValuableNFT.sol";
 import {DamnValuableToken} from "../../../src/Contracts/DamnValuableToken.sol";
 import {WETH9} from "../../../src/Contracts/WETH9.sol";
 
+import {FreeRiderAttack} from "./FreeRiderAttack.sol";
+
 contract FreeRider is Test {
     // The NFT marketplace will have 6 tokens, at 15 ETH each
     uint256 internal constant NFT_PRICE = 15 ether;
@@ -135,6 +137,10 @@ contract FreeRider is Test {
          * EXPLOIT START *
          */
         vm.startPrank(attacker, attacker);
+        FreeRiderAttack freeRiderAttack =
+            new FreeRiderAttack(freeRiderBuyer, freeRiderNFTMarketplace, dvt, damnValuableNFT, uniswapV2Pair, weth);
+
+        freeRiderAttack.attack();
 
         vm.stopPrank();
         /**
